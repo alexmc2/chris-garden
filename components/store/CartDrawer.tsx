@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
 import {
   Sheet,
@@ -9,12 +9,12 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/components/store/CartProvider";
-import Price, { formatPrice } from "@/components/store/Price";
-import { Minus, Plus, Trash2 } from "@/lib/icons";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { useCart } from '@/components/store/CartProvider';
+import Price, { formatPrice } from '@/components/store/Price';
+import { Minus, Plus, Trash2 } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 export default function CartDrawer() {
   const {
@@ -27,6 +27,7 @@ export default function CartDrawer() {
     clear,
     closeCart,
     openCart,
+    isHydrated,
   } = useCart();
 
   const handleOpenChange = (open: boolean) => {
@@ -42,16 +43,18 @@ export default function CartDrawer() {
       <SheetContent side="right" className="w-full max-w-lg p-0">
         <SheetHeader className="border-b border-border/60 bg-background p-6">
           <div>
-            <SheetTitle className="text-xl font-semibold">Shopping Cart</SheetTitle>
+            <SheetTitle className="text-xl font-semibold">
+              Shopping Cart
+            </SheetTitle>
             <p className="text-sm text-muted-foreground">
-              {itemCount === 1 ? "1 item" : `${itemCount} items`}
+              {itemCount === 1 ? '1 item' : `${itemCount} items`}
             </p>
           </div>
         </SheetHeader>
 
         <div className="flex h-full flex-col justify-between overflow-hidden">
           <div className="flex-1 overflow-y-auto p-6">
-            {items.length === 0 ? (
+            {!isHydrated ? null : items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
                 <p className="text-lg font-medium text-muted-foreground">
                   Your cart is empty.
@@ -75,7 +78,9 @@ export default function CartDrawer() {
                           fill
                           className="h-full w-full object-cover"
                           sizes="120px"
-                          placeholder={item.image.blurDataURL ? "blur" : undefined}
+                          placeholder={
+                            item.image.blurDataURL ? 'blur' : undefined
+                          }
                           blurDataURL={item.image.blurDataURL ?? undefined}
                         />
                       ) : (
@@ -95,13 +100,17 @@ export default function CartDrawer() {
                           >
                             {item.title}
                           </Link>
-                          {item.variantOptions && item.variantOptions.length > 0 && (
-                            <div className="text-xs text-muted-foreground">
-                              {item.variantOptions
-                                .map((option) => `${option.name}: ${option.value}`)
-                                .join(" · ")}
-                            </div>
-                          )}
+                          {item.variantOptions &&
+                            item.variantOptions.length > 0 && (
+                              <div className="text-xs text-muted-foreground">
+                                {item.variantOptions
+                                  .map(
+                                    (option) =>
+                                      `${option.name}: ${option.value}`
+                                  )
+                                  .join(' · ')}
+                              </div>
+                            )}
                         </div>
                         <Button
                           type="button"
@@ -121,7 +130,9 @@ export default function CartDrawer() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
+                            onClick={() =>
+                              updateQuantity(item.lineId, item.quantity - 1)
+                            }
                             className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
                             aria-label="Decrease quantity"
                           >
@@ -134,14 +145,19 @@ export default function CartDrawer() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
+                            onClick={() =>
+                              updateQuantity(item.lineId, item.quantity + 1)
+                            }
                             className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
                             aria-label="Increase quantity"
                           >
                             <Plus className="size-4" />
                           </Button>
                         </div>
-                        <Price amount={item.price * item.quantity} className="text-base font-semibold" />
+                        <Price
+                          amount={item.price * item.quantity}
+                          className="text-base font-semibold"
+                        />
                       </div>
                     </div>
                   </li>
@@ -155,18 +171,19 @@ export default function CartDrawer() {
               <div className="flex items-center justify-between text-base">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span className="text-lg font-semibold">
-                  {formatPrice(subtotal) ?? "£0.00"}
+                  {formatPrice(subtotal) ?? '£0.00'}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
                 <Button
                   asChild
+                  onClick={closeCart}
                   className={cn(
-                    "w-full justify-center rounded-full px-6 py-3 text-base font-semibold",
-                    items.length === 0 && "pointer-events-none opacity-60"
+                    'w-full justify-center rounded-full px-6 py-3 text-base font-semibold',
+                    (!isHydrated || items.length === 0) && 'pointer-events-none opacity-60'
                   )}
                 >
-                  <Link href="/checkout" aria-disabled={items.length === 0}>
+                  <Link href="/checkout" aria-disabled={!isHydrated || items.length === 0}>
                     Proceed to checkout
                   </Link>
                 </Button>
@@ -174,7 +191,7 @@ export default function CartDrawer() {
                   type="button"
                   variant="ghost"
                   onClick={clear}
-                  disabled={items.length === 0}
+                  disabled={!isHydrated || items.length === 0}
                   className="justify-start text-sm font-medium text-muted-foreground hover:text-foreground"
                 >
                   Clear cart

@@ -173,7 +173,7 @@ function ShippingRadio({
 
 export default function CheckoutContent() {
   const router = useRouter();
-  const { items, subtotal, clear } = useCart();
+  const { items, subtotal, clear, isHydrated } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paypalOrderId, setPaypalOrderId] = useState<string | null>(null);
 
@@ -387,7 +387,7 @@ export default function CheckoutContent() {
         </p>
       </div>
 
-      {!hasCartItems ? (
+      {!isHydrated ? null : !hasCartItems ? (
         <Card className="rounded-2xl border border-border/60 bg-card p-10 text-center">
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-foreground">

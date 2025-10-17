@@ -34,6 +34,8 @@ interface CartContextValue {
   itemCount: number;
   subtotal: number;
   isOpen: boolean;
+  // True once cart state has been read from storage
+  isHydrated: boolean;
   addItem: (item: CartItemInput, quantity?: number) => void;
   removeItem: (lineId: string) => void;
   updateQuantity: (lineId: string, quantity: number) => void;
@@ -155,6 +157,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       itemCount,
       subtotal,
       isOpen,
+      isHydrated: isMounted,
       addItem,
       removeItem,
       updateQuantity,
@@ -168,6 +171,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       itemCount,
       subtotal,
       isOpen,
+      isMounted,
       addItem,
       removeItem,
       updateQuantity,

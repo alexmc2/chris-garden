@@ -4,6 +4,8 @@ import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
+import { CartProvider } from '@/components/store/CartProvider';
+import CartDrawer from '@/components/store/CartDrawer';
 import { Toaster } from '@/components/ui/sonner';
 import { fontBody, fontHeading, fontSans } from '@/lib/fonts';
 import { projectId } from '@/sanity/env';
@@ -82,14 +84,17 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <CartProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+          <CartDrawer />
+        </CartProvider>
         <Analytics />
         <Toaster position="top-center" richColors />
       </body>
